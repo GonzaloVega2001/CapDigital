@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, LogOut, Smartphone, Laptop, Wifi, Shield, MessageCircle, Mail, Lock } from "lucide-react"
+import { BookOpen, LogOut, Smartphone, Laptop, Wifi, Shield, MessageCircle, Mail, Lock, Menu, X } from "lucide-react"
 import { getUserProgress, getUserStats, getCourseProgress, getCourseProgressRobust, getOverallProgress } from "@/lib/database"
 import { debugUserProgress, checkDatabaseStructure } from "@/lib/debug-progress"
 import { debugUserProgressDetailed, checkAndFixProgressData } from "@/lib/debug-detailed"
@@ -259,33 +259,74 @@ export default function CoursesPage() {
       <header className="bg-white shadow-sm border-b-2 border-cyan-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
+            {/* Logo */}
             <Link href="/dashboard" className="flex items-center space-x-3">
               <div className="bg-gradient-to-br from-cyan-500 to-blue-500 p-3 rounded-xl">
                 <BookOpen className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">CapDigital</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">CapDigital</h1>
                 <p className="text-sm text-cyan-600 font-medium">Todos los Cursos</p>
               </div>
             </Link>
-            <div className="flex items-center space-x-4">
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-4">
               <Link href="/dashboard">
                 <Button variant="outline">Panel de Control</Button>
               </Link>
-              <Button onClick={debugProgress} variant="outline" className="bg-yellow-100">
-                🐛 Debug Progress
-              </Button>
-              <Button onClick={forceUpdateProgress} variant="outline" className="bg-green-100">
-                🔄 Force Update
-              </Button>
-              <Button onClick={reloadUserProgress} variant="outline" className="bg-blue-100">
-                🔄 Reload Progress
-              </Button>
               <span className="text-lg font-medium text-gray-700">Hola, {user.name}</span>
               <Button variant="outline" onClick={handleLogout} className="flex items-center space-x-2 bg-transparent">
                 <LogOut className="h-4 w-4" />
                 <span>Salir</span>
               </Button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="lg:hidden relative">
+              <input type="checkbox" id="mobile-menu-toggle" className="hidden peer" />
+              <label 
+                htmlFor="mobile-menu-toggle" 
+                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+              >
+                <Menu className="h-6 w-6 text-gray-700 block peer-checked:hidden" />
+                <X className="h-6 w-6 text-gray-700 hidden peer-checked:block" />
+              </label>
+
+              {/* Mobile Menu Dropdown */}
+              <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 transform scale-95 opacity-0 origin-top-right peer-checked:scale-100 peer-checked:opacity-100 transition-all duration-200">
+                <div className="p-4 space-y-3">
+                  {/* User Info */}
+                  <div className="border-b border-gray-200 pb-3">
+                    <span className="text-base font-medium text-gray-700">Hola, {user.name}</span>
+                  </div>
+                  
+                  {/* Navigation Links */}
+                  <Link href="/dashboard" className="block w-full">
+                    <Button variant="outline" className="w-full justify-start">
+                      Panel de Control
+                    </Button>
+                  </Link>
+                  
+                  {/* Logout */}
+                  <div className="pt-3 border-t border-gray-200">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleLogout} 
+                      className="w-full justify-start bg-red-50 hover:bg-red-100"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Salir
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Overlay para cerrar el menú */}
+              <label 
+                htmlFor="mobile-menu-toggle"
+                className="fixed inset-0 bg-black bg-opacity-25 z-40 hidden peer-checked:block cursor-pointer"
+              />
             </div>
           </div>
         </div>
@@ -294,14 +335,14 @@ export default function CoursesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Catálogo de Cursos</h2>
-          <p className="text-lg text-gray-600">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Catálogo de Cursos</h2>
+          <p className="text-base sm:text-lg text-gray-600">
             Explora todos nuestros cursos diseñados especialmente para adultos mayores
           </p>
         </div>
 
         {/* Course Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => {
             const IconComponent = course.icon
             return (
@@ -312,12 +353,12 @@ export default function CoursesPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className={`p-3 rounded-xl ${course.unlocked ? "bg-cyan-100" : "bg-gray-100"}`}>
-                      <IconComponent className={`h-8 w-8 ${course.unlocked ? "text-cyan-600" : "text-gray-400"}`} />
+                      <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 ${course.unlocked ? "text-cyan-600" : "text-gray-400"}`} />
                     </div>
                     {!course.unlocked && <Lock className="h-5 w-5 text-gray-400" />}
                   </div>
-                  <CardTitle className="text-xl">{course.title}</CardTitle>
-                  <CardDescription className="text-base">{course.description}</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">{course.title}</CardTitle>
+                  <CardDescription className="text-sm sm:text-base">{course.description}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
@@ -358,7 +399,7 @@ export default function CoursesPage() {
                     {/* Action Button */}
                     <Link href={course.unlocked ? `/lessons/${course.id}` : "#"}>
                       <Button
-                        className={`w-full ${course.unlocked ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600" : ""}`}
+                        className={`w-full text-sm sm:text-base ${course.unlocked ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600" : ""}`}
                         disabled={!course.unlocked}
                       >
                         {course.unlocked
@@ -376,33 +417,33 @@ export default function CoursesPage() {
         </div>
 
         {/* Learning Path Info */}
-        <div className="mt-12 bg-white rounded-xl border-2 border-cyan-200 p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Tu Ruta de Aprendizaje</h3>
-          <p className="text-lg text-gray-600 mb-6">
+        <div className="mt-12 bg-white rounded-xl border-2 border-cyan-200 p-6 sm:p-8">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Tu Ruta de Aprendizaje</h3>
+          <p className="text-base sm:text-lg text-gray-600 mb-6">
             Los cursos están organizados en una secuencia lógica. Completa cada curso para desbloquear el siguiente y
             construir tus habilidades digitales paso a paso.
           </p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="bg-cyan-100 p-4 rounded-full w-16 h-16 mx-auto mb-3">
-                <span className="text-2xl font-bold text-cyan-600">1</span>
+              <div className="bg-cyan-100 p-4 rounded-full w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 flex items-center justify-center">
+                <span className="text-xl sm:text-2xl font-bold text-cyan-600">1</span>
               </div>
-              <h4 className="font-semibold text-gray-900">Fundamentos</h4>
-              <p className="text-sm text-gray-600">Celular e Internet básico</p>
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Fundamentos</h4>
+              <p className="text-xs sm:text-sm text-gray-600">Celular e Internet básico</p>
             </div>
             <div className="text-center">
-              <div className="bg-cyan-100 p-4 rounded-full w-16 h-16 mx-auto mb-3">
-                <span className="text-2xl font-bold text-cyan-600">2</span>
+              <div className="bg-cyan-100 p-4 rounded-full w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 flex items-center justify-center">
+                <span className="text-xl sm:text-2xl font-bold text-cyan-600">2</span>
               </div>
-              <h4 className="font-semibold text-gray-900">Comunicación</h4>
-              <p className="text-sm text-gray-600">WhatsApp y Email</p>
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Comunicación</h4>
+              <p className="text-xs sm:text-sm text-gray-600">WhatsApp y Email</p>
             </div>
             <div className="text-center">
-              <div className="bg-cyan-100 p-4 rounded-full w-16 h-16 mx-auto mb-3">
-                <span className="text-2xl font-bold text-cyan-600">3</span>
+              <div className="bg-cyan-100 p-4 rounded-full w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 flex items-center justify-center">
+                <span className="text-xl sm:text-2xl font-bold text-cyan-600">3</span>
               </div>
-              <h4 className="font-semibold text-gray-900">Seguridad</h4>
-              <p className="text-sm text-gray-600">Protección digital</p>
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Seguridad</h4>
+              <p className="text-xs sm:text-sm text-gray-600">Protección digital</p>
             </div>
           </div>
         </div>

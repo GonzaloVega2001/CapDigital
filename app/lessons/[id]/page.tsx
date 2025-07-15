@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, LogOut, CheckCircle, Circle, Play, Clock, ArrowRight, ArrowLeft } from "lucide-react"
+import { BookOpen, LogOut, CheckCircle, Circle, Play, Clock, ArrowRight, ArrowLeft, Menu, X } from "lucide-react"
 import { completeLessonByCourse, getUserProgress, getUserStats, getLessonsByCourse, getCourseById } from "@/lib/database"
 import { useToast } from "@/hooks/use-toast"
 
@@ -247,16 +247,19 @@ export default function LessonsPage() {
       <header className="bg-white shadow-sm border-b-2 border-cyan-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
+            {/* Logo */}
             <Link href="/dashboard" className="flex items-center space-x-3">
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-500 p-3 rounded-xl">
-                <BookOpen className="h-8 w-8 text-white" />
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-500 p-2 sm:p-3 rounded-xl">
+                <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">CapDigital</h1>
-                <p className="text-sm text-cyan-600 font-medium">{courseTitle}</p>
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900">CapDigital</h1>
+                <p className="text-xs sm:text-sm text-cyan-600 font-medium">{courseTitle}</p>
               </div>
             </Link>
-            <div className="flex items-center space-x-4">
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-4">
               <Link href="/courses">
                 <Button variant="outline">Todos los Cursos</Button>
               </Link>
@@ -266,6 +269,59 @@ export default function LessonsPage() {
                 <span>Salir</span>
               </Button>
             </div>
+
+            {/* Mobile Navigation */}
+            <div className="lg:hidden relative">
+              <input type="checkbox" id="mobile-menu-toggle" className="hidden peer" />
+              <label 
+                htmlFor="mobile-menu-toggle" 
+                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+              >
+                <Menu className="h-6 w-6 text-gray-700 block peer-checked:hidden" />
+                <X className="h-6 w-6 text-gray-700 hidden peer-checked:block" />
+              </label>
+
+              {/* Mobile Menu Dropdown */}
+              <div className="absolute top-full right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-lg z-50 transform scale-95 opacity-0 origin-top-right peer-checked:scale-100 peer-checked:opacity-100 transition-all duration-200">
+                <div className="p-4 space-y-3">
+                  {/* User Info */}
+                  <div className="border-b border-gray-200 pb-3">
+                    <span className="text-base font-medium text-gray-700">Hola, {user.name}</span>
+                  </div>
+                  
+                  {/* Navigation Links */}
+                  <Link href="/courses" className="block w-full">
+                    <Button variant="outline" className="w-full justify-start">
+                      Todos los Cursos
+                    </Button>
+                  </Link>
+                  
+                  <Link href="/dashboard" className="block w-full">
+                    <Button variant="outline" className="w-full justify-start">
+                      Panel de Control
+                    </Button>
+                  </Link>
+                  
+                  {/* Logout */}
+                  <div className="pt-3 border-t border-gray-200">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleLogout} 
+                      className="w-full justify-start bg-red-50 hover:bg-red-100"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Salir
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Overlay para cerrar el menú */}
+              <label 
+                htmlFor="mobile-menu-toggle"
+                className="fixed inset-0 bg-black bg-opacity-25 z-40 hidden peer-checked:block cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -273,24 +329,24 @@ export default function LessonsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Course Progress */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold text-gray-900">{courseTitle}</h2>
-            <Badge className="bg-cyan-100 text-cyan-800 text-base px-4 py-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{courseTitle}</h2>
+            <Badge className="bg-cyan-100 text-cyan-800 text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2">
               {completedLessons} de {lessons.length} completadas
             </Badge>
           </div>
           <div className="flex items-center space-x-4">
             <Progress value={progressValue} className="flex-1" />
-            <span className="text-lg font-medium text-cyan-600">{Math.round(progressValue)}%</span>
+            <span className="text-base sm:text-lg font-medium text-cyan-600">{Math.round(progressValue)}%</span>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Lesson List */}
           <div className="lg:col-span-1">
             <Card className="border-2 border-cyan-200">
               <CardHeader>
-                <CardTitle>Lecciones del Curso</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Lecciones del Curso</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -298,21 +354,21 @@ export default function LessonsPage() {
                     <button
                       key={lesson.id}
                       onClick={() => setCurrentLesson(lesson.order_index)}
-                      className={`w-full text-left p-3 rounded-lg border-2 transition-colors ${
+                      className={`w-full text-left p-2 sm:p-3 rounded-lg border-2 transition-colors ${
                         currentLesson === lesson.order_index
                           ? "border-cyan-300 bg-cyan-50"
                           : "border-gray-200 hover:border-cyan-200"
                       }`}
                     >
-                      <div className="flex items-start space-x-3">
+                      <div className="flex items-start space-x-2 sm:space-x-3">
                         {lesson.completed ? (
-                          <CheckCircle className="h-5 w-5 text-cyan-600 mt-0.5" />
+                          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-600 mt-0.5" />
                         ) : (
-                          <Circle className="h-5 w-5 text-gray-400 mt-0.5" />
+                          <Circle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5" />
                         )}
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm">{lesson.title}</p>
-                          <div className="flex items-center space-x-2 mt-1">
+                          <p className="font-medium text-gray-900 text-xs sm:text-sm">{lesson.title}</p>
+                          <div className="flex items-center space-x-1 sm:space-x-2 mt-1">
                             <Clock className="h-3 w-3 text-gray-400" />
                             <span className="text-xs text-gray-500">{lesson.duration}</span>
                           </div>
@@ -330,31 +386,31 @@ export default function LessonsPage() {
             {currentLessonData && (
               <Card className="border-2 border-cyan-200">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <CardTitle className="text-2xl">{currentLessonData.title}</CardTitle>
-                      <CardDescription className="text-base mt-2">{currentLessonData.description}</CardDescription>
+                      <CardTitle className="text-xl sm:text-2xl">{currentLessonData.title}</CardTitle>
+                      <CardDescription className="text-sm sm:text-base mt-2">{currentLessonData.description}</CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-500">{currentLessonData.duration}</span>
+                      <span className="text-sm sm:text-base text-gray-500">{currentLessonData.duration}</span>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   {/* Video Placeholder */}
-                  <div className="bg-gray-100 rounded-lg p-8 mb-6 text-center">
-                    <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 text-lg">Video de la lección: {currentLessonData.title}</p>
+                  <div className="bg-gray-100 rounded-lg p-4 sm:p-8 mb-6 text-center">
+                    <Play className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 text-base sm:text-lg">Video de la lección: {currentLessonData.title}</p>
                     {currentLessonData.video_url ? (
                       <Button 
-                        className="mt-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+                        className="mt-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-sm sm:text-base"
                         onClick={() => window.open(currentLessonData.video_url, '_blank')}
                       >
                         Reproducir Video
                       </Button>
                     ) : (
-                      <Button className="mt-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600">
+                      <Button className="mt-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-sm sm:text-base">
                         Reproducir Video
                       </Button>
                     )}
@@ -362,28 +418,28 @@ export default function LessonsPage() {
 
                   {/* Lesson Content */}
                   <div className="prose max-w-none">
-                    <p className="text-lg leading-relaxed text-gray-700 mb-6">{currentLessonData.content}</p>
+                    <p className="text-base sm:text-lg leading-relaxed text-gray-700 mb-6">{currentLessonData.content}</p>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex justify-between items-center mt-8 pt-6 border-t">
+                  <div className="flex flex-col sm:flex-row justify-between items-center mt-8 pt-6 border-t gap-4">
                     <Button
                       variant="outline"
                       onClick={() => setCurrentLesson(Math.max(1, currentLesson - 1))}
                       disabled={currentLesson === 1}
-                      className="flex items-center space-x-2"
+                      className="w-full sm:w-auto flex items-center space-x-2"
                     >
                       <ArrowLeft className="h-4 w-4" />
                       <span>Lección Anterior</span>
                     </Button>
 
-                    <div className="flex space-x-4">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                       {/* Botón para completar lección */}
                       {!currentLessonData?.completed && (
                         <Button
                           onClick={() => markLessonComplete(currentLesson)}
                           disabled={isLoading}
-                          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+                          className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-sm sm:text-base"
                         >
                           {isLoading ? "Completando..." : 
                            currentLesson === lessons.length ? "Terminar Curso" : "Terminar Lección"}
@@ -395,7 +451,7 @@ export default function LessonsPage() {
                         <Button
                           onClick={() => setCurrentLesson(Math.min(lessons.length, currentLesson + 1))}
                           disabled={!canProceed}
-                          className="flex items-center space-x-2"
+                          className="w-full sm:w-auto flex items-center space-x-2"
                         >
                           <span>Siguiente Lección</span>
                           <ArrowRight className="h-4 w-4" />
@@ -406,7 +462,7 @@ export default function LessonsPage() {
 
                   {!canProceed && currentLesson < lessons.length && (
                     <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-yellow-800">Completa esta lección para continuar con la siguiente.</p>
+                      <p className="text-sm sm:text-base text-yellow-800">Completa esta lección para continuar con la siguiente.</p>
                     </div>
                   )}
                 </CardContent>
